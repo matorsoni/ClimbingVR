@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Polylised - Medieval Desert City/Demo/DemoTest.unity
+  isLoaded: 1
+  isActive: 1
