@@ -35,6 +35,7 @@
 
             if (isMoving)
             {
+                print("isMoving");
                 Vector3 moveAmount;
                 
                 if(isMovingDown)

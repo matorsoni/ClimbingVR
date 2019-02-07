@@ -1,6 +1,5 @@
 ﻿// Interactable Object|Interactables|35010
-namespace VRTK
-{
+namespace VRTK {
     using UnityEngine;
     using System.Collections;
     using System.Collections.Generic;
@@ -11,8 +10,7 @@ namespace VRTK
     /// Event Payload
     /// </summary>
     /// <param name="interactingObject">The GameObject that is initiating the interaction (e.g. a controller).</param>
-    public struct InteractableObjectEventArgs
-    {
+    public struct InteractableObjectEventArgs {
         public GameObject interactingObject;
     }
 
@@ -60,13 +58,11 @@ namespace VRTK
     /// `VRTK/Examples/013_Controller_UsingAndGrabbingMultipleObjects` shows multiple objects that can be grabbed by holding the buttons or grabbed by toggling the button click and also has objects that can have their Using state toggled to show how multiple items can be turned on at the same time.
     /// </example>
     [AddComponentMenu("VRTK/Scripts/Interactions/Interactables/VRTK_InteractableObject")]
-    public class VRTK_InteractableObject : MonoBehaviour
-    {
+    public class VRTK_InteractableObject : MonoBehaviour {
         /// <summary>
         /// The interaction type.
         /// </summary>
-        public enum InteractionType
-        {
+        public enum InteractionType {
             /// <summary>
             /// No interaction is affecting the object.
             /// </summary>
@@ -108,8 +104,7 @@ namespace VRTK
         /// <summary>
         /// Allowed controller type.
         /// </summary>
-        public enum AllowedController
-        {
+        public enum AllowedController {
             /// <summary>
             /// Both controllers are allowed to interact.
             /// </summary>
@@ -127,8 +122,7 @@ namespace VRTK
         /// <summary>
         /// The types of valid situations that the object can be released from grab.
         /// </summary>
-        public enum ValidDropTypes
-        {
+        public enum ValidDropTypes {
             /// <summary>
             /// The object cannot be dropped via the controller.
             /// </summary>
@@ -202,6 +196,12 @@ namespace VRTK
         [System.Obsolete("`VRTK_InteractableObject.touchHighlightColor` has been replaced with `VRTK_InteractObjectHighlighter.touchHighlight`. This parameter will be removed in a future version of VRTK.")]
         [ObsoleteInspector]
         public Color touchHighlightColor = Color.clear;
+
+        [Header("Breakable Setting")]
+        public bool isBreakable = false;
+        private MeshRenderer mMeshRenderer;
+        public GameObject DestroyedObject;
+        private bool isBreaking = false;
 
         protected Rigidbody interactableRigidbody;
         protected HashSet<GameObject> currentIgnoredColliders = new HashSet<GameObject>();
@@ -291,139 +291,105 @@ namespace VRTK
         /// <summary>
         /// isKinematic is a pass through to the `isKinematic` getter/setter on the Interactable Object's Rigidbody component.
         /// </summary>
-        public bool isKinematic
-        {
-            get
-            {
-                if (interactableRigidbody != null)
-                {
+        public bool isKinematic {
+            get {
+                if (interactableRigidbody != null) {
                     return interactableRigidbody.isKinematic;
                 }
                 return true;
             }
-            set
-            {
-                if (interactableRigidbody != null)
-                {
+            set {
+                if (interactableRigidbody != null) {
                     interactableRigidbody.isKinematic = value;
                 }
             }
         }
 
-        public virtual void OnInteractableObjectEnabled(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectEnabled != null)
-            {
+        public virtual void OnInteractableObjectEnabled(InteractableObjectEventArgs e) {
+            if (InteractableObjectEnabled != null) {
                 InteractableObjectEnabled(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectDisabled(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectDisabled != null)
-            {
+        public virtual void OnInteractableObjectDisabled(InteractableObjectEventArgs e) {
+            if (InteractableObjectDisabled != null) {
                 InteractableObjectDisabled(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectNearTouched(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectNearTouched != null)
-            {
+        public virtual void OnInteractableObjectNearTouched(InteractableObjectEventArgs e) {
+            if (InteractableObjectNearTouched != null) {
                 InteractableObjectNearTouched(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectNearUntouched(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectNearUntouched != null)
-            {
+        public virtual void OnInteractableObjectNearUntouched(InteractableObjectEventArgs e) {
+            if (InteractableObjectNearUntouched != null) {
                 InteractableObjectNearUntouched(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectTouched(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectTouched != null)
-            {
+        public virtual void OnInteractableObjectTouched(InteractableObjectEventArgs e) {
+            if (InteractableObjectTouched != null) {
                 InteractableObjectTouched(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectUntouched(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUntouched != null)
-            {
+        public virtual void OnInteractableObjectUntouched(InteractableObjectEventArgs e) {
+            if (InteractableObjectUntouched != null) {
                 InteractableObjectUntouched(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectGrabbed != null)
-            {
+        public virtual void OnInteractableObjectGrabbed(InteractableObjectEventArgs e) {
+            if (InteractableObjectGrabbed != null) {
                 InteractableObjectGrabbed(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUngrabbed != null)
-            {
+        public virtual void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e) {
+            if (InteractableObjectUngrabbed != null) {
                 InteractableObjectUngrabbed(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectUsed(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUsed != null)
-            {
+        public virtual void OnInteractableObjectUsed(InteractableObjectEventArgs e) {
+            if (InteractableObjectUsed != null) {
                 InteractableObjectUsed(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectUnused(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUnused != null)
-            {
+        public virtual void OnInteractableObjectUnused(InteractableObjectEventArgs e) {
+            if (InteractableObjectUnused != null) {
                 InteractableObjectUnused(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectEnteredSnapDropZone(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectEnteredSnapDropZone != null)
-            {
+        public virtual void OnInteractableObjectEnteredSnapDropZone(InteractableObjectEventArgs e) {
+            if (InteractableObjectEnteredSnapDropZone != null) {
                 InteractableObjectEnteredSnapDropZone(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectExitedSnapDropZone(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectExitedSnapDropZone != null)
-            {
+        public virtual void OnInteractableObjectExitedSnapDropZone(InteractableObjectEventArgs e) {
+            if (InteractableObjectExitedSnapDropZone != null) {
                 InteractableObjectExitedSnapDropZone(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectSnappedToDropZone(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectSnappedToDropZone != null)
-            {
+        public virtual void OnInteractableObjectSnappedToDropZone(InteractableObjectEventArgs e) {
+            if (InteractableObjectSnappedToDropZone != null) {
                 InteractableObjectSnappedToDropZone(this, e);
             }
         }
 
-        public virtual void OnInteractableObjectUnsnappedFromDropZone(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUnsnappedFromDropZone != null)
-            {
+        public virtual void OnInteractableObjectUnsnappedFromDropZone(InteractableObjectEventArgs e) {
+            if (InteractableObjectUnsnappedFromDropZone != null) {
                 InteractableObjectUnsnappedFromDropZone(this, e);
             }
         }
 
-        public InteractableObjectEventArgs SetInteractableObjectEvent(GameObject interactingObject)
-        {
+        public InteractableObjectEventArgs SetInteractableObjectEvent(GameObject interactingObject) {
             InteractableObjectEventArgs e;
             e.interactingObject = interactingObject;
             return e;
@@ -433,8 +399,7 @@ namespace VRTK
         /// The IsNearTouched method is used to determine if the Interactable Object is currently being near touched.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object is currently being near touched.</returns>
-        public virtual bool IsNearTouched()
-        {
+        public virtual bool IsNearTouched() {
             return (!IsTouched() && nearTouchingObjects.Count > 0);
         }
 
@@ -442,8 +407,7 @@ namespace VRTK
         /// The IsTouched method is used to determine if the Interactable Object is currently being touched.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object is currently being touched.</returns>
-        public virtual bool IsTouched()
-        {
+        public virtual bool IsTouched() {
             return (touchingObjects.Count > 0);
         }
 
@@ -452,10 +416,8 @@ namespace VRTK
         /// </summary>
         /// <param name="grabbedBy">An optional GameObject to check if the Interactable Object is grabbed by that specific GameObject. Defaults to `null`</param>
         /// <returns>Returns `true` if the Interactable Object is currently being grabbed.</returns>
-        public virtual bool IsGrabbed(GameObject grabbedBy = null)
-        {
-            if (grabbingObjects.Count > 0 && grabbedBy != null)
-            {
+        public virtual bool IsGrabbed(GameObject grabbedBy = null) {
+            if (grabbingObjects.Count > 0 && grabbedBy != null) {
                 return (grabbingObjects.Contains(grabbedBy));
             }
             return (grabbingObjects.Count > 0);
@@ -466,10 +428,8 @@ namespace VRTK
         /// </summary>
         /// <param name="usedBy">An optional GameObject to check if the Interactable Object is used by that specific GameObject. Defaults to `null`</param>
         /// <returns>Returns `true` if the Interactable Object is currently being used.</returns>
-        public virtual bool IsUsing(GameObject usedBy = null)
-        {
-            if (usingObject != null && usedBy != null)
-            {
+        public virtual bool IsUsing(GameObject usedBy = null) {
+            if (usingObject != null && usedBy != null) {
                 return (usingObject.gameObject == usedBy);
             }
             return (usingObject != null);
@@ -479,13 +439,10 @@ namespace VRTK
         /// The StartNearTouching method is called automatically when the Interactable Object is initially nearly touched.
         /// </summary>
         /// <param name="currentNearTouchingObject">The interacting object that is currently nearly touching this Interactable Object.</param>
-        public virtual void StartNearTouching(VRTK_InteractNearTouch currentNearTouchingObject = null)
-        {
+        public virtual void StartNearTouching(VRTK_InteractNearTouch currentNearTouchingObject = null) {
             GameObject currentNearTouchingGameObject = (currentNearTouchingObject != null ? currentNearTouchingObject.gameObject : null);
-            if (currentNearTouchingGameObject != null)
-            {
-                if (nearTouchingObjects.Add(currentNearTouchingGameObject))
-                {
+            if (currentNearTouchingGameObject != null) {
+                if (nearTouchingObjects.Add(currentNearTouchingGameObject)) {
                     ToggleEnableState(true);
                     OnInteractableObjectNearTouched(SetInteractableObjectEvent(currentNearTouchingGameObject));
                 }
@@ -496,11 +453,9 @@ namespace VRTK
         /// The StopNearTouching method is called automatically when the Interactable Object has stopped being nearly touched.
         /// </summary>
         /// <param name="previousNearTouchingObject">The interacting object that was previously nearly touching this Interactable Object.</param>
-        public virtual void StopNearTouching(VRTK_InteractNearTouch previousNearTouchingObject = null)
-        {
+        public virtual void StopNearTouching(VRTK_InteractNearTouch previousNearTouchingObject = null) {
             GameObject previousNearTouchingGameObject = (previousNearTouchingObject != null ? previousNearTouchingObject.gameObject : null);
-            if (previousNearTouchingGameObject != null && nearTouchingObjects.Remove(previousNearTouchingGameObject))
-            {
+            if (previousNearTouchingGameObject != null && nearTouchingObjects.Remove(previousNearTouchingGameObject)) {
                 OnInteractableObjectNearUntouched(SetInteractableObjectEvent(previousNearTouchingGameObject));
             }
         }
@@ -509,14 +464,11 @@ namespace VRTK
         /// The StartTouching method is called automatically when the Interactable Object is touched initially.
         /// </summary>
         /// <param name="currentTouchingObject">The interacting object that is currently touching this Interactable Object.</param>
-        public virtual void StartTouching(VRTK_InteractTouch currentTouchingObject = null)
-        {
+        public virtual void StartTouching(VRTK_InteractTouch currentTouchingObject = null) {
             GameObject currentTouchingGameObject = (currentTouchingObject != null ? currentTouchingObject.gameObject : null);
-            if (currentTouchingGameObject != null)
-            {
+            if (currentTouchingGameObject != null) {
                 IgnoreColliders(currentTouchingGameObject);
-                if (touchingObjects.Add(currentTouchingGameObject))
-                {
+                if (touchingObjects.Add(currentTouchingGameObject)) {
                     ToggleEnableState(true);
                     OnInteractableObjectTouched(SetInteractableObjectEvent(currentTouchingGameObject));
                 }
@@ -527,11 +479,9 @@ namespace VRTK
         /// The StopTouching method is called automatically when the Interactable Object has stopped being touched.
         /// </summary>
         /// <param name="previousTouchingObject">The interacting object that was previously touching this Interactable Object.</param>
-        public virtual void StopTouching(VRTK_InteractTouch previousTouchingObject = null)
-        {
+        public virtual void StopTouching(VRTK_InteractTouch previousTouchingObject = null) {
             GameObject previousTouchingGameObject = (previousTouchingObject != null ? previousTouchingObject.gameObject : null);
-            if (previousTouchingGameObject != null && touchingObjects.Remove(previousTouchingGameObject))
-            {
+            if (previousTouchingGameObject != null && touchingObjects.Remove(previousTouchingGameObject)) {
                 ResetUseState(previousTouchingGameObject);
                 OnInteractableObjectUntouched(SetInteractableObjectEvent(previousTouchingGameObject));
             }
@@ -541,16 +491,13 @@ namespace VRTK
         /// The Grabbed method is called automatically when the Interactable Object is grabbed initially.
         /// </summary>
         /// <param name="currentGrabbingObject">The interacting object that is currently grabbing this Interactable Object.</param>
-        public virtual void Grabbed(VRTK_InteractGrab currentGrabbingObject = null)
-        {
+        public virtual void Grabbed(VRTK_InteractGrab currentGrabbingObject = null) {
             GameObject currentGrabbingGameObject = (currentGrabbingObject != null ? currentGrabbingObject.gameObject : null);
             ToggleEnableState(true);
-            if (!IsGrabbed() || IsSwappable())
-            {
+            if (!IsGrabbed() || IsSwappable()) {
                 PrimaryControllerGrab(currentGrabbingGameObject);
             }
-            else
-            {
+            else {
                 SecondaryControllerGrab(currentGrabbingGameObject);
             }
             OnInteractableObjectGrabbed(SetInteractableObjectEvent(currentGrabbingGameObject));
@@ -560,17 +507,14 @@ namespace VRTK
         /// The Ungrabbed method is called automatically when the Interactable Object has stopped being grabbed.
         /// </summary>
         /// <param name="previousGrabbingObject">The interacting object that was previously grabbing this Interactable Object.</param>
-        public virtual void Ungrabbed(VRTK_InteractGrab previousGrabbingObject = null)
-        {
+        public virtual void Ungrabbed(VRTK_InteractGrab previousGrabbingObject = null) {
             GameObject previousGrabbingGameObject = (previousGrabbingObject != null ? previousGrabbingObject.gameObject : null);
             GameObject secondaryGrabbingObject = GetSecondaryGrabbingObject();
-            if (secondaryGrabbingObject == null || secondaryGrabbingObject != previousGrabbingGameObject)
-            {
+            if (secondaryGrabbingObject == null || secondaryGrabbingObject != previousGrabbingGameObject) {
                 SecondaryControllerUngrab(secondaryGrabbingObject);
                 PrimaryControllerUngrab(previousGrabbingGameObject, secondaryGrabbingObject);
             }
-            else
-            {
+            else {
                 SecondaryControllerUngrab(previousGrabbingGameObject);
             }
             OnInteractableObjectUngrabbed(SetInteractableObjectEvent(previousGrabbingGameObject));
@@ -580,12 +524,10 @@ namespace VRTK
         /// The StartUsing method is called automatically when the Interactable Object is used initially.
         /// </summary>
         /// <param name="currentUsingObject">The interacting object that is currently using this Interactable Object.</param>
-        public virtual void StartUsing(VRTK_InteractUse currentUsingObject = null)
-        {
+        public virtual void StartUsing(VRTK_InteractUse currentUsingObject = null) {
             GameObject currentUsingGameObject = (currentUsingObject != null ? currentUsingObject.gameObject : null);
             ToggleEnableState(true);
-            if (IsUsing() && !IsUsing(currentUsingGameObject))
-            {
+            if (IsUsing() && !IsUsing(currentUsingGameObject)) {
                 ResetUsingObject();
             }
             OnInteractableObjectUsed(SetInteractableObjectEvent(currentUsingGameObject));
@@ -597,12 +539,10 @@ namespace VRTK
         /// </summary>
         /// <param name="previousUsingObject">The interacting object that was previously using this Interactable Object.</param>
         /// <param name="resetUsingObjectState">Resets the using object state to reset it's using action.</param>
-        public virtual void StopUsing(VRTK_InteractUse previousUsingObject = null, bool resetUsingObjectState = true)
-        {
+        public virtual void StopUsing(VRTK_InteractUse previousUsingObject = null, bool resetUsingObjectState = true) {
             GameObject previousUsingGameObject = (previousUsingObject != null ? previousUsingObject.gameObject : null);
             OnInteractableObjectUnused(SetInteractableObjectEvent(previousUsingGameObject));
-            if (resetUsingObjectState)
-            {
+            if (resetUsingObjectState) {
                 ResetUsingObject();
             }
             usingState = 0;
@@ -614,14 +554,11 @@ namespace VRTK
         /// </summary>
         /// <param name="toggle">The state to determine whether to activate or deactivate the highlight. `true` will enable the highlight and `false` will remove the highlight.</param>
         [System.Obsolete("`VRTK_InteractableObject.ToggleHighlight` has been replaced with `VRTK_InteractableObject.Highlight` and `VRTK_InteractableObject.Unhighlight`. This method will be removed in a future version of VRTK.")]
-        public virtual void ToggleHighlight(bool toggle, Color? highlightColor = null)
-        {
-            if (toggle)
-            {
+        public virtual void ToggleHighlight(bool toggle, Color? highlightColor = null) {
+            if (toggle) {
                 Highlight((highlightColor != null ? (Color)highlightColor : Color.clear));
             }
-            else
-            {
+            else {
                 Unhighlight();
             }
         }
@@ -631,11 +568,9 @@ namespace VRTK
         /// </summary>
         /// <param name="highlightColor">The colour to apply to the highlighter.</param>
         [System.Obsolete("`VRTK_InteractableObject.Highlight` has been replaced with `VRTK_InteractObjectHighlighter.Highlight`. This method will be removed in a future version of VRTK.")]
-        public virtual void Highlight(Color highlightColor)
-        {
+        public virtual void Highlight(Color highlightColor) {
             VRTK_InteractObjectHighlighter interactObjectHighlighter = GetComponentInChildren<VRTK_InteractObjectHighlighter>();
-            if (interactObjectHighlighter != null)
-            {
+            if (interactObjectHighlighter != null) {
                 interactObjectHighlighter.Highlight(highlightColor);
             }
         }
@@ -644,11 +579,9 @@ namespace VRTK
         /// The Unhighlight method turns off the highlighter attached to the Interactable Object.
         /// </summary>
         [System.Obsolete("`VRTK_InteractableObject.Unhighlight` has been replaced with `VRTK_InteractObjectHighlighter.Unhighlight`. This method will be removed in a future version of VRTK.")]
-        public virtual void Unhighlight()
-        {
+        public virtual void Unhighlight() {
             VRTK_InteractObjectHighlighter interactObjectHighlighter = GetComponentInChildren<VRTK_InteractObjectHighlighter>();
-            if (interactObjectHighlighter != null)
-            {
+            if (interactObjectHighlighter != null) {
                 interactObjectHighlighter.Unhighlight();
             }
         }
@@ -657,11 +590,9 @@ namespace VRTK
         /// The ResetHighlighter method is used to reset the currently attached highlighter.
         /// </summary>
         [System.Obsolete("`VRTK_InteractableObject.ResetHighlighter` has been replaced with `VRTK_InteractObjectHighlighter.ResetHighlighter`. This method will be removed in a future version of VRTK.")]
-        public virtual void ResetHighlighter()
-        {
+        public virtual void ResetHighlighter() {
             VRTK_InteractObjectHighlighter interactObjectHighlighter = GetComponentInChildren<VRTK_InteractObjectHighlighter>();
-            if (interactObjectHighlighter != null)
-            {
+            if (interactObjectHighlighter != null) {
                 interactObjectHighlighter.ResetHighlighter();
             }
         }
@@ -670,13 +601,10 @@ namespace VRTK
         /// The PauseCollisions method temporarily pauses all collisions on the Interactable Object at grab time by removing the Interactable Object's Rigidbody's ability to detect collisions.
         /// </summary>
         /// <param name="delay">The time in seconds to pause the collisions for.</param>
-        public virtual void PauseCollisions(float delay)
-        {
-            if (delay > 0f)
-            {
+        public virtual void PauseCollisions(float delay) {
+            if (delay > 0f) {
                 Rigidbody[] childRigidbodies = GetComponentsInChildren<Rigidbody>();
-                for (int i = 0; i < childRigidbodies.Length; i++)
-                {
+                for (int i = 0; i < childRigidbodies.Length; i++) {
                     childRigidbodies[i].detectCollisions = false;
                 }
                 Invoke("UnpauseCollisions", delay);
@@ -686,10 +614,8 @@ namespace VRTK
         /// <summary>
         /// The ZeroVelocity method resets the velocity and angular velocity to zero on the Rigidbody attached to the Interactable Object.
         /// </summary>
-        public virtual void ZeroVelocity()
-        {
-            if (interactableRigidbody != null)
-            {
+        public virtual void ZeroVelocity() {
+            if (interactableRigidbody != null) {
                 interactableRigidbody.velocity = Vector3.zero;
                 interactableRigidbody.angularVelocity = Vector3.zero;
             }
@@ -698,18 +624,14 @@ namespace VRTK
         /// <summary>
         /// The SaveCurrentState method stores the existing Interactable Object parent and the Rigidbody kinematic setting.
         /// </summary>
-        public virtual void SaveCurrentState()
-        {
-            if (!IsGrabbed() && !snappedInSnapDropZone)
-            {
+        public virtual void SaveCurrentState() {
+            if (!IsGrabbed() && !snappedInSnapDropZone) {
                 previousParent = transform.parent;
-                if (!IsSwappable())
-                {
+                if (!IsSwappable()) {
                     previousIsGrabbable = isGrabbable;
                 }
 
-                if (interactableRigidbody != null)
-                {
+                if (interactableRigidbody != null) {
                     previousKinematicState = interactableRigidbody.isKinematic;
                 }
             }
@@ -721,8 +643,7 @@ namespace VRTK
         /// <param name="previousParent">Out param for the previous parent</param>
         /// <param name="previousKinematic">Out param for the previous Kinematic state</param>
         /// <param name="previousGrabbable">Out param for the previous Grabbable State</param>
-        public virtual void GetPreviousState(out Transform previousParent, out bool previousKinematic, out bool previousGrabbable)
-        {
+        public virtual void GetPreviousState(out Transform previousParent, out bool previousKinematic, out bool previousGrabbable) {
             previousParent = this.previousParent;
             previousKinematic = previousKinematicState;
             previousGrabbable = previousIsGrabbable;
@@ -734,8 +655,7 @@ namespace VRTK
         /// <param name="previousParent">value of the previous parent</param>
         /// <param name="previousKinematic">value of the previous Kinematic state</param>
         /// <param name="previousGrabbable">value of the previous Grabbable State</param>
-        public virtual void OverridePreviousState(Transform previousParent, bool previousKinematic, bool previousGrabbable)
-        {
+        public virtual void OverridePreviousState(Transform previousParent, bool previousKinematic, bool previousGrabbable) {
             this.previousParent = previousParent;
             previousKinematicState = previousKinematic;
             previousIsGrabbable = previousGrabbable;
@@ -745,8 +665,7 @@ namespace VRTK
         /// The GetNearTouchingObjects method is used to return the collecetion of valid GameObjects that are currently nearly touching this Interactable Object.
         /// </summary>
         /// <returns>A list of GameObject of that are currently nearly touching the current Interactable Object.</returns>
-        public virtual List<GameObject> GetNearTouchingObjects()
-        {
+        public virtual List<GameObject> GetNearTouchingObjects() {
             return new List<GameObject>(nearTouchingObjects);
         }
 
@@ -754,8 +673,7 @@ namespace VRTK
         /// The GetTouchingObjects method is used to return the collecetion of valid GameObjects that are currently touching this Interactable Object.
         /// </summary>
         /// <returns>A list of GameObject of that are currently touching the current Interactable Object.</returns>
-        public virtual List<GameObject> GetTouchingObjects()
-        {
+        public virtual List<GameObject> GetTouchingObjects() {
             return new List<GameObject>(touchingObjects);
         }
 
@@ -763,8 +681,7 @@ namespace VRTK
         /// The GetGrabbingObject method is used to return the GameObject that is currently grabbing this Interactable Object.
         /// </summary>
         /// <returns>The GameObject of what is grabbing the current Interactable Object.</returns>
-        public virtual GameObject GetGrabbingObject()
-        {
+        public virtual GameObject GetGrabbingObject() {
             return (IsGrabbed() ? grabbingObjects[0] : null);
         }
 
@@ -772,8 +689,7 @@ namespace VRTK
         /// The GetSecondaryGrabbingObject method is used to return the GameObject that is currently being used to influence this Interactable Object whilst it is being grabbed by a secondary influencing.
         /// </summary>
         /// <returns>The GameObject of the secondary influencing object of the current grabbed Interactable Object.</returns>
-        public virtual GameObject GetSecondaryGrabbingObject()
-        {
+        public virtual GameObject GetSecondaryGrabbingObject() {
             return (grabbingObjects.Count > 1 ? grabbingObjects[1] : null);
         }
 
@@ -781,8 +697,7 @@ namespace VRTK
         /// The GetUsingObject method is used to return the GameObject that is currently using this Interactable Object.
         /// </summary>
         /// <returns>The GameObject of what is using the current Interactable Object.</returns>
-        public virtual GameObject GetUsingObject()
-        {
+        public virtual GameObject GetUsingObject() {
             return usingObject.gameObject;
         }
 
@@ -790,8 +705,7 @@ namespace VRTK
         /// The GetUsingScript method is used to return the Interact Use component that is currently using this Interactable Object.
         /// </summary>
         /// <returns>The Interact Use script of the interacting object that is using the current Interactable Object.</returns>
-        public virtual VRTK_InteractUse GetUsingScript()
-        {
+        public virtual VRTK_InteractUse GetUsingScript() {
             return usingObject;
         }
 
@@ -801,10 +715,8 @@ namespace VRTK
         /// <param name="actualController">The GameObject of the controller that is being checked.</param>
         /// <param name="controllerCheck">The value of which controller is allowed to interact with this object.</param>
         /// <returns>Returns `true` if the interacting controller is allowed to grab the Interactable Object.</returns>
-        public virtual bool IsValidInteractableController(GameObject actualController, AllowedController controllerCheck)
-        {
-            if (controllerCheck == AllowedController.Both)
-            {
+        public virtual bool IsValidInteractableController(GameObject actualController, AllowedController controllerCheck) {
+            if (controllerCheck == AllowedController.Both) {
                 return true;
             }
 
@@ -815,16 +727,13 @@ namespace VRTK
         /// <summary>
         /// The ForceStopInteracting method forces the Interactable Object to no longer be interacted with and will cause an interacting object to drop the Interactable Object and stop touching it.
         /// </summary>
-        public virtual void ForceStopInteracting()
-        {
-            if (gameObject.activeInHierarchy)
-            {
+        public virtual void ForceStopInteracting() {
+            if (gameObject.activeInHierarchy) {
                 forceDisabled = false;
                 StartCoroutine(ForceStopInteractingAtEndOfFrame());
             }
 
-            if (!gameObject.activeInHierarchy && forceDisabled)
-            {
+            if (!gameObject.activeInHierarchy && forceDisabled) {
                 ForceStopAllInteractions();
                 forceDisabled = false;
             }
@@ -833,11 +742,9 @@ namespace VRTK
         /// <summary>
         /// The ForceStopSecondaryGrabInteraction method forces the Interactable Object to no longer be influenced by the second controller grabbing it.
         /// </summary>
-        public virtual void ForceStopSecondaryGrabInteraction()
-        {
+        public virtual void ForceStopSecondaryGrabInteraction() {
             GameObject grabbingObject = GetSecondaryGrabbingObject();
-            if (grabbingObject != null)
-            {
+            if (grabbingObject != null) {
                 grabbingObject.GetComponentInChildren<VRTK_InteractGrab>().ForceRelease();
             }
         }
@@ -845,18 +752,15 @@ namespace VRTK
         /// <summary>
         /// The RegisterTeleporters method is used to find all GameObjects that have a teleporter script and register the Interactable Object on the `OnTeleported` event.
         /// </summary>
-        public virtual void RegisterTeleporters()
-        {
+        public virtual void RegisterTeleporters() {
             StartCoroutine(RegisterTeleportersAtEndOfFrame());
         }
 
         /// <summary>
         /// The UnregisterTeleporters method is used to unregister all teleporter events that are active on this Interactable Object.
         /// </summary>
-        public virtual void UnregisterTeleporters()
-        {
-            for (int i = 0; i < VRTK_ObjectCache.registeredTeleporters.Count; i++)
-            {
+        public virtual void UnregisterTeleporters() {
+            for (int i = 0; i < VRTK_ObjectCache.registeredTeleporters.Count; i++) {
                 VRTK_BasicTeleport teleporter = VRTK_ObjectCache.registeredTeleporters[i];
                 teleporter.Teleporting -= new TeleportEventHandler(OnTeleporting);
                 teleporter.Teleported -= new TeleportEventHandler(OnTeleported);
@@ -866,8 +770,7 @@ namespace VRTK
         /// <summary>
         /// the StoreLocalScale method saves the current transform local scale values.
         /// </summary>
-        public virtual void StoreLocalScale()
-        {
+        public virtual void StoreLocalScale() {
             previousLocalScale = transform.localScale;
         }
 
@@ -876,18 +779,14 @@ namespace VRTK
         /// </summary>
         /// <param name="snapDropZone">The Snap Drop Zone object that is being interacted with.</param>
         /// <param name="state">The state of whether the Interactable Object is fixed in or removed from the Snap Drop Zone. `true` denotes the Interactable Object is snapped to the Snap Drop Zone and `false` denotes it has been removed from the Snap Drop Zone.</param>
-        public virtual void ToggleSnapDropZone(VRTK_SnapDropZone snapDropZone, bool state)
-        {
+        public virtual void ToggleSnapDropZone(VRTK_SnapDropZone snapDropZone, bool state) {
             snappedInSnapDropZone = state;
-            if (state)
-            {
+            if (state) {
                 storedSnapDropZone = snapDropZone;
                 OnInteractableObjectSnappedToDropZone(SetInteractableObjectEvent(snapDropZone.gameObject));
             }
-            else
-            {
-                if (interactableRigidbody != null)
-                {
+            else {
+                if (interactableRigidbody != null) {
                     interactableRigidbody.WakeUp();
                 }
                 ResetDropSnapType();
@@ -899,8 +798,7 @@ namespace VRTK
         /// The IsInSnapDropZone method determines whether the Interactable Object is currently snapped to a Snap Drop Zone.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object is currently snapped in a Snap Drop Zone, returns `false` if it is not.</returns>
-        public virtual bool IsInSnapDropZone()
-        {
+        public virtual bool IsInSnapDropZone() {
             return snappedInSnapDropZone;
         }
 
@@ -909,19 +807,14 @@ namespace VRTK
         /// </summary>
         /// <param name="snapDropZone">The Snap Drop Zone that is being interacted with.</param>
         /// <param name="state">The state of whether the Interactable Object is being hovered or not.</param>
-        public virtual void SetSnapDropZoneHover(VRTK_SnapDropZone snapDropZone, bool state)
-        {
-            if (state)
-            {
-                if (hoveredSnapObjects.Add(snapDropZone.gameObject))
-                {
+        public virtual void SetSnapDropZoneHover(VRTK_SnapDropZone snapDropZone, bool state) {
+            if (state) {
+                if (hoveredSnapObjects.Add(snapDropZone.gameObject)) {
                     OnInteractableObjectEnteredSnapDropZone(SetInteractableObjectEvent(snapDropZone.gameObject));
                 }
             }
-            else
-            {
-                if (hoveredSnapObjects.Remove(snapDropZone.gameObject))
-                {
+            else {
+                if (hoveredSnapObjects.Remove(snapDropZone.gameObject)) {
                     OnInteractableObjectExitedSnapDropZone(SetInteractableObjectEvent(snapDropZone.gameObject));
                 }
             }
@@ -932,8 +825,7 @@ namespace VRTK
         /// The GetStoredSnapDropZone method returns the Snap Drop Zone that the Interactable Object is currently snapped to.
         /// </summary>
         /// <returns>The SnapDropZone that the Interactable Object is currently snapped to.</returns>
-        public virtual VRTK_SnapDropZone GetStoredSnapDropZone()
-        {
+        public virtual VRTK_SnapDropZone GetStoredSnapDropZone() {
             return storedSnapDropZone;
         }
 
@@ -941,8 +833,7 @@ namespace VRTK
         /// The IsHoveredOverSnapDropZone method returns whether the Interactable Object is currently hovering over a Snap Drop Zone.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object is currently hovering over a Snap Drop Zone.</returns>
-        public virtual bool IsHoveredOverSnapDropZone()
-        {
+        public virtual bool IsHoveredOverSnapDropZone() {
             return hoveredOverSnapDropZone;
         }
 
@@ -950,10 +841,8 @@ namespace VRTK
         /// The IsDroppable method returns whether the Interactable Object can be dropped or not in it's current situation.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object can currently be dropped, returns `false` if it is not currently possible to drop.</returns>
-        public virtual bool IsDroppable()
-        {
-            switch (validDrop)
-            {
+        public virtual bool IsDroppable() {
+            switch (validDrop) {
                 case ValidDropTypes.NoDrop:
                     return false;
                 case ValidDropTypes.DropAnywhere:
@@ -968,8 +857,7 @@ namespace VRTK
         /// The IsSwappable method returns whether the Interactable Object can be grabbed with one interacting object and then swapped to another interacting object by grabbing with the secondary grab action.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object can be grabbed by a secondary interacting object whilst already being grabbed and the Interactable Object will swap controllers. Returns `false` if the Interactable Object cannot be swapped.</returns>
-        public virtual bool IsSwappable()
-        {
+        public virtual bool IsSwappable() {
             return (secondaryGrabActionScript != null ? secondaryGrabActionScript.IsSwappable() : false);
         }
 
@@ -977,28 +865,21 @@ namespace VRTK
         /// The PerformSecondaryAction method returns whether the Interactable Object has a Secondary Grab Action that can be performed when grabbing the object with a secondary interacting object.
         /// </summary>
         /// <returns>Returns `true` if the Interactable Object has a Secondary Grab Action, returns `false` if it has no Secondary Grab Action or is swappable.</returns>
-        public virtual bool PerformSecondaryAction()
-        {
+        public virtual bool PerformSecondaryAction() {
             return (GetGrabbingObject() != null && GetSecondaryGrabbingObject() == null && secondaryGrabActionScript != null ? secondaryGrabActionScript.IsActionable() : false);
         }
 
         /// <summary>
         /// The ResetIgnoredColliders method is used to clear any stored ignored colliders in case the `Ignored Colliders` array parameter is changed at runtime. This needs to be called manually if changes are made at runtime.
         /// </summary>
-        public virtual void ResetIgnoredColliders()
-        {
+        public virtual void ResetIgnoredColliders() {
             //Go through all the existing set up ignored colliders and reset their collision state
-            foreach (GameObject currentIgnoredCollider in new HashSet<GameObject>(currentIgnoredColliders))
-            {
-                if (currentIgnoredCollider != null)
-                {
+            foreach (GameObject currentIgnoredCollider in new HashSet<GameObject>(currentIgnoredColliders)) {
+                if (currentIgnoredCollider != null) {
                     Collider[] touchingColliders = currentIgnoredCollider.GetComponentsInChildren<Collider>();
-                    if (ignoredColliders != null)
-                    {
-                        for (int i = 0; i < ignoredColliders.Length; i++)
-                        {
-                            for (int j = 0; j < touchingColliders.Length; j++)
-                            {
+                    if (ignoredColliders != null) {
+                        for (int i = 0; i < ignoredColliders.Length; i++) {
+                            for (int j = 0; j < touchingColliders.Length; j++) {
                                 Physics.IgnoreCollision(touchingColliders[j], ignoredColliders[i], false);
                             }
                         }
@@ -1013,8 +894,7 @@ namespace VRTK
         /// </summary>
         /// <param name="givenType">The Interaction Type to register the events for.</param>
         /// <param name="methodCallback">The method to execute when the Interaction Type is initiated.</param>
-        public virtual void SubscribeToInteractionEvent(InteractionType givenType, InteractableObjectEventHandler methodCallback)
-        {
+        public virtual void SubscribeToInteractionEvent(InteractionType givenType, InteractableObjectEventHandler methodCallback) {
             ManageInteractionEvent(givenType, true, methodCallback);
         }
 
@@ -1023,8 +903,7 @@ namespace VRTK
         /// </summary>
         /// <param name="givenType">The Interaction Type that the previous event subscription was under.</param>
         /// <param name="methodCallback">The method that was being executed when the Interaction Type was initiated.</param>
-        public virtual void UnsubscribeFromInteractionEvent(InteractionType givenType, InteractableObjectEventHandler methodCallback)
-        {
+        public virtual void UnsubscribeFromInteractionEvent(InteractionType givenType, InteractableObjectEventHandler methodCallback) {
             ManageInteractionEvent(givenType, false, methodCallback);
         }
 
@@ -1032,8 +911,7 @@ namespace VRTK
         /// The GetPrimaryAttachPoint returns the Transform that determines where the primary grabbing object is grabbing the Interactable Object at.
         /// </summary>
         /// <returns>A Transform that denotes where the primary grabbing object is grabbing the Interactable Object at.</returns>
-        public virtual Transform GetPrimaryAttachPoint()
-        {
+        public virtual Transform GetPrimaryAttachPoint() {
             return primaryControllerAttachPoint;
         }
 
@@ -1041,29 +919,24 @@ namespace VRTK
         /// The GetSecondaryAttachPoint returns the Transform that determines where the secondary grabbing object is grabbing the Interactable Object at.
         /// </summary>
         /// <returns>A Transform that denotes where the secondary grabbing object is grabbing the Interactable Object at.</returns>
-        public virtual Transform GetSecondaryAttachPoint()
-        {
+        public virtual Transform GetSecondaryAttachPoint() {
             return secondaryControllerAttachPoint;
         }
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             interactableRigidbody = GetComponent<Rigidbody>();
-            if (interactableRigidbody != null)
-            {
+            if (interactableRigidbody != null) {
                 interactableRigidbody.maxAngularVelocity = float.MaxValue;
             }
 
-            if (disableWhenIdle && enabled && IsIdle())
-            {
+            if (disableWhenIdle && enabled && IsIdle()) {
                 startDisabled = true;
                 enabled = false;
             }
 
             ///[Obsolete]
 #pragma warning disable 0618
-            if (touchHighlightColor != Color.clear && !GetComponent<VRTK_InteractObjectHighlighter>())
-            {
+            if (touchHighlightColor != Color.clear && !GetComponent<VRTK_InteractObjectHighlighter>()) {
                 VRTK_InteractObjectHighlighter autoGenInteractHighlighter = gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
                 autoGenInteractHighlighter.touchHighlight = touchHighlightColor;
                 autoGenInteractHighlighter.objectHighlighter = (objectHighlighter == null ? Highlighters.VRTK_BaseHighlighter.GetActiveHighlighter(gameObject) : objectHighlighter);
@@ -1071,12 +944,10 @@ namespace VRTK
 #pragma warning restore 0618
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             RegisterTeleporters();
             forceDisabled = false;
-            if (forcedDropped)
-            {
+            if (forcedDropped) {
                 LoadPreviousState();
             }
             forcedDropped = false;
@@ -1084,44 +955,68 @@ namespace VRTK
             OnInteractableObjectEnabled(SetInteractableObjectEvent(null));
         }
 
-        protected virtual void OnDisable()
-        {
+        protected virtual void OnDisable() {
             UnregisterTeleporters();
-            if (!startDisabled)
-            {
+            if (!startDisabled) {
                 forceDisabled = true;
                 ForceStopInteracting();
             }
             OnInteractableObjectDisabled(SetInteractableObjectEvent(null));
         }
 
-        protected virtual void FixedUpdate()
-        {
-            if (trackPoint != null && grabAttachMechanicScript != null)
-            {
+        protected virtual void FixedUpdate() {
+            if (trackPoint != null && grabAttachMechanicScript != null) {
                 grabAttachMechanicScript.ProcessFixedUpdate();
             }
 
-            if (secondaryGrabActionScript != null)
-            {
+            if (secondaryGrabActionScript != null) {
                 secondaryGrabActionScript.ProcessFixedUpdate();
             }
         }
 
-        protected virtual void Update()
-        {
+        protected virtual void Start() {
+            mMeshRenderer = GetComponent<MeshRenderer>();
+        }
+
+        protected virtual void Update() {
             AttemptSetGrabMechanic();
             AttemptSetSecondaryGrabAction();
 
-            if (trackPoint != null && grabAttachMechanicScript != null)
-            {
+            if (trackPoint != null && grabAttachMechanicScript != null) {
                 grabAttachMechanicScript.ProcessUpdate();
             }
 
-            if (secondaryGrabActionScript != null)
-            {
+            if (secondaryGrabActionScript != null) {
                 secondaryGrabActionScript.ProcessUpdate();
             }
+
+            if (isBreakable && IsGrabbed() && !isBreaking) {
+                isBreaking = true;
+                StartCoroutine(Break(5));
+            }
+        }
+
+        public IEnumerator Blink(float waitTime) {
+            while (true) {
+                yield return new WaitForSeconds(waitTime);
+                mMeshRenderer.enabled = !mMeshRenderer.enabled;
+            }
+        }
+
+        public IEnumerator Break(float lastingTime) {
+            IEnumerator coroutine;
+            coroutine = Blink(0.5f);
+
+            StartCoroutine(coroutine);
+            yield return new WaitForSeconds(lastingTime);
+            StopCoroutine(coroutine);
+            mMeshRenderer.enabled = false;
+            DestroyedObject = Instantiate(DestroyedObject, this.transform.position, this.transform.rotation) as GameObject;
+            ForceReleaseGrab();
+            yield return new WaitForSeconds(0.1f);
+            Destroy(gameObject);
+            yield return new WaitForSeconds(3);
+            Destroy(DestroyedObject);
         }
 
         /// <summary>
@@ -1130,176 +1025,139 @@ namespace VRTK
         /// can be disabled for now
         /// </summary>
         /// <returns>whether or not the script is currently idle</returns>
-        protected virtual bool IsIdle()
-        {
+        protected virtual bool IsIdle() {
             return !IsNearTouched() && !IsTouched() && !IsGrabbed() && !IsUsing();
         }
 
-        protected virtual void LateUpdate()
-        {
-            if (disableWhenIdle && IsIdle())
-            {
+        protected virtual void LateUpdate() {
+            if (disableWhenIdle && IsIdle()) {
                 ToggleEnableState(false);
             }
         }
 
-        protected virtual void LoadPreviousState()
-        {
-            if (gameObject.activeInHierarchy)
-            {
+        protected virtual void LoadPreviousState() {
+            if (gameObject.activeInHierarchy) {
                 transform.SetParent(previousParent);
                 forcedDropped = false;
             }
-            if (interactableRigidbody != null)
-            {
+            if (interactableRigidbody != null) {
                 interactableRigidbody.isKinematic = previousKinematicState;
             }
-            if (!IsSwappable())
-            {
+            if (!IsSwappable()) {
                 isGrabbable = previousIsGrabbable;
             }
         }
 
-        protected virtual void IgnoreColliders(GameObject touchingObject)
-        {
-            if (ignoredColliders != null && !currentIgnoredColliders.Contains(touchingObject))
-            {
+        protected virtual void IgnoreColliders(GameObject touchingObject) {
+            if (ignoredColliders != null && !currentIgnoredColliders.Contains(touchingObject)) {
                 bool objectIgnored = false;
                 Collider[] touchingColliders = touchingObject.GetComponentsInChildren<Collider>();
-                for (int i = 0; i < ignoredColliders.Length; i++)
-                {
-                    for (int j = 0; j < touchingColliders.Length; j++)
-                    {
+                for (int i = 0; i < ignoredColliders.Length; i++) {
+                    for (int j = 0; j < touchingColliders.Length; j++) {
                         Physics.IgnoreCollision(touchingColliders[j], ignoredColliders[i]);
                         objectIgnored = true;
                     }
                 }
 
-                if (objectIgnored)
-                {
+                if (objectIgnored) {
                     currentIgnoredColliders.Add(touchingObject);
                 }
             }
         }
 
-        protected virtual void ToggleEnableState(bool state)
-        {
-            if (disableWhenIdle)
-            {
+        protected virtual void ToggleEnableState(bool state) {
+            if (disableWhenIdle) {
                 enabled = state;
             }
         }
 
-        protected virtual void AttemptSetGrabMechanic()
-        {
-            if (isGrabbable && grabAttachMechanicScript == null)
-            {
+        protected virtual void AttemptSetGrabMechanic() {
+            if (isGrabbable && grabAttachMechanicScript == null) {
                 VRTK_BaseGrabAttach setGrabMechanic = GetComponent<VRTK_BaseGrabAttach>();
-                if (setGrabMechanic == null)
-                {
+                if (setGrabMechanic == null) {
                     setGrabMechanic = gameObject.AddComponent<VRTK_FixedJointGrabAttach>();
                 }
                 grabAttachMechanicScript = setGrabMechanic;
             }
         }
 
-        protected virtual void AttemptSetSecondaryGrabAction()
-        {
-            if (isGrabbable && secondaryGrabActionScript == null)
-            {
+        protected virtual void AttemptSetSecondaryGrabAction() {
+            if (isGrabbable && secondaryGrabActionScript == null) {
                 secondaryGrabActionScript = GetComponent<VRTK_BaseGrabAction>();
             }
         }
 
-        protected virtual void ForceReleaseGrab()
-        {
+        protected virtual void ForceReleaseGrab() {
             GameObject grabbingObject = GetGrabbingObject();
-            if (grabbingObject != null)
-            {
+            if (grabbingObject != null) {
                 grabbingObject.GetComponentInChildren<VRTK_InteractGrab>().ForceRelease();
             }
         }
 
-        protected virtual void PrimaryControllerGrab(GameObject currentGrabbingObject)
-        {
-            if (snappedInSnapDropZone)
-            {
+        protected virtual void PrimaryControllerGrab(GameObject currentGrabbingObject) {
+            if (snappedInSnapDropZone) {
                 ToggleSnapDropZone(storedSnapDropZone, false);
             }
             ForceReleaseGrab();
             RemoveTrackPoint();
             VRTK_SharedMethods.AddListValue(grabbingObjects, currentGrabbingObject, true);
             SetTrackPoint(currentGrabbingObject);
-            if (!IsSwappable())
-            {
+            if (!IsSwappable()) {
                 previousIsGrabbable = isGrabbable;
                 isGrabbable = false;
             }
         }
 
-        protected virtual void SecondaryControllerGrab(GameObject currentGrabbingObject)
-        {
-            if (VRTK_SharedMethods.AddListValue(grabbingObjects, currentGrabbingObject, true))
-            {
+        protected virtual void SecondaryControllerGrab(GameObject currentGrabbingObject) {
+            if (VRTK_SharedMethods.AddListValue(grabbingObjects, currentGrabbingObject, true)) {
                 secondaryControllerAttachPoint = CreateAttachPoint(currentGrabbingObject.name, "Secondary", currentGrabbingObject.transform);
 
-                if (secondaryGrabActionScript != null)
-                {
+                if (secondaryGrabActionScript != null) {
                     secondaryGrabActionScript.Initialise(this, GetGrabbingObject().GetComponentInChildren<VRTK_InteractGrab>(), GetSecondaryGrabbingObject().GetComponentInChildren<VRTK_InteractGrab>(), primaryControllerAttachPoint, secondaryControllerAttachPoint);
                 }
             }
         }
 
-        protected virtual void PrimaryControllerUngrab(GameObject previousGrabbingObject, GameObject previousSecondaryGrabbingObject)
-        {
+        protected virtual void PrimaryControllerUngrab(GameObject previousGrabbingObject, GameObject previousSecondaryGrabbingObject) {
             UnpauseCollisions();
             RemoveTrackPoint();
             ResetUseState(previousGrabbingObject);
             grabbingObjects.Clear();
-            if (secondaryGrabActionScript != null && previousSecondaryGrabbingObject != null)
-            {
+            if (secondaryGrabActionScript != null && previousSecondaryGrabbingObject != null) {
                 secondaryGrabActionScript.OnDropAction();
                 previousSecondaryGrabbingObject.GetComponentInChildren<VRTK_InteractGrab>().ForceRelease();
             }
             LoadPreviousState();
         }
 
-        protected virtual void SecondaryControllerUngrab(GameObject previousGrabbingObject)
-        {
-            if (grabbingObjects.Remove(previousGrabbingObject))
-            {
+        protected virtual void SecondaryControllerUngrab(GameObject previousGrabbingObject) {
+            if (grabbingObjects.Remove(previousGrabbingObject)) {
                 Destroy(secondaryControllerAttachPoint.gameObject);
                 secondaryControllerAttachPoint = null;
-                if (secondaryGrabActionScript != null)
-                {
+                if (secondaryGrabActionScript != null) {
                     secondaryGrabActionScript.ResetAction();
                 }
             }
         }
 
-        protected virtual void UnpauseCollisions()
-        {
+        protected virtual void UnpauseCollisions() {
             Rigidbody[] childRigidbodies = GetComponentsInChildren<Rigidbody>();
-            for (int i = 0; i < childRigidbodies.Length; i++)
-            {
+            for (int i = 0; i < childRigidbodies.Length; i++) {
                 childRigidbodies[i].detectCollisions = true;
             }
         }
 
-        protected virtual void SetTrackPoint(GameObject currentGrabbingObject)
-        {
+        protected virtual void SetTrackPoint(GameObject currentGrabbingObject) {
             AddTrackPoint(currentGrabbingObject);
             primaryControllerAttachPoint = CreateAttachPoint(GetGrabbingObject().name, "Original", trackPoint);
 
-            if (grabAttachMechanicScript != null)
-            {
+            if (grabAttachMechanicScript != null) {
                 grabAttachMechanicScript.SetTrackPoint(trackPoint);
                 grabAttachMechanicScript.SetInitialAttachPoint(primaryControllerAttachPoint);
             }
         }
 
-        protected virtual Transform CreateAttachPoint(string namePrefix, string nameSuffix, Transform origin)
-        {
+        protected virtual Transform CreateAttachPoint(string namePrefix, string nameSuffix, Transform origin) {
             Transform attachPoint = new GameObject(VRTK_SharedMethods.GenerateVRTKObjectName(true, namePrefix, nameSuffix, "Controller", "AttachPoint")).transform;
             attachPoint.SetParent(transform);
             attachPoint.position = origin.position;
@@ -1308,88 +1166,69 @@ namespace VRTK
             return attachPoint;
         }
 
-        protected virtual void AddTrackPoint(GameObject currentGrabbingObject)
-        {
+        protected virtual void AddTrackPoint(GameObject currentGrabbingObject) {
             VRTK_InteractGrab grabScript = currentGrabbingObject.GetComponentInChildren<VRTK_InteractGrab>();
             Transform controllerPoint = ((grabScript && grabScript.controllerAttachPoint) ? grabScript.controllerAttachPoint.transform : currentGrabbingObject.transform);
 
-            if (grabAttachMechanicScript != null)
-            {
+            if (grabAttachMechanicScript != null) {
                 trackPoint = grabAttachMechanicScript.CreateTrackPoint(controllerPoint, gameObject, currentGrabbingObject, ref customTrackPoint);
             }
         }
 
-        protected virtual void RemoveTrackPoint()
-        {
-            if (customTrackPoint && trackPoint != null)
-            {
+        protected virtual void RemoveTrackPoint() {
+            if (customTrackPoint && trackPoint != null) {
                 Destroy(trackPoint.gameObject);
             }
-            else
-            {
+            else {
                 trackPoint = null;
             }
 
-            if (primaryControllerAttachPoint != null)
-            {
+            if (primaryControllerAttachPoint != null) {
                 Destroy(primaryControllerAttachPoint.gameObject);
             }
         }
 
-        protected virtual void OnTeleporting(object sender, DestinationMarkerEventArgs e)
-        {
-            if (!stayGrabbedOnTeleport)
-            {
+        protected virtual void OnTeleporting(object sender, DestinationMarkerEventArgs e) {
+            if (!stayGrabbedOnTeleport) {
                 ZeroVelocity();
                 ForceStopAllInteractions();
             }
         }
 
-        protected virtual void OnTeleported(object sender, DestinationMarkerEventArgs e)
-        {
-            if (grabAttachMechanicScript != null && grabAttachMechanicScript.IsTracked() && stayGrabbedOnTeleport && trackPoint != null)
-            {
+        protected virtual void OnTeleported(object sender, DestinationMarkerEventArgs e) {
+            if (grabAttachMechanicScript != null && grabAttachMechanicScript.IsTracked() && stayGrabbedOnTeleport && trackPoint != null) {
                 GameObject actualController = VRTK_DeviceFinder.GetActualController(GetGrabbingObject());
                 transform.position = (actualController ? actualController.transform.position : transform.position);
             }
         }
 
-        protected virtual IEnumerator RegisterTeleportersAtEndOfFrame()
-        {
+        protected virtual IEnumerator RegisterTeleportersAtEndOfFrame() {
             yield return new WaitForEndOfFrame();
-            for (int i = 0; i < VRTK_ObjectCache.registeredTeleporters.Count; i++)
-            {
+            for (int i = 0; i < VRTK_ObjectCache.registeredTeleporters.Count; i++) {
                 VRTK_BasicTeleport teleporter = VRTK_ObjectCache.registeredTeleporters[i];
                 teleporter.Teleporting += new TeleportEventHandler(OnTeleporting);
                 teleporter.Teleported += new TeleportEventHandler(OnTeleported);
             }
         }
 
-        protected virtual void ResetUseState(GameObject checkObject)
-        {
-            if (checkObject != null)
-            {
+        protected virtual void ResetUseState(GameObject checkObject) {
+            if (checkObject != null) {
                 VRTK_InteractUse usingObjectCheck = checkObject.GetComponentInChildren<VRTK_InteractUse>();
-                if (usingObjectCheck != null)
-                {
-                    if (holdButtonToUse)
-                    {
+                if (usingObjectCheck != null) {
+                    if (holdButtonToUse) {
                         usingObjectCheck.ForceStopUsing();
                     }
                 }
             }
         }
 
-        protected virtual IEnumerator ForceStopInteractingAtEndOfFrame()
-        {
+        protected virtual IEnumerator ForceStopInteractingAtEndOfFrame() {
             yield return new WaitForEndOfFrame();
             ForceStopAllInteractions();
         }
 
-        protected virtual void ForceStopAllInteractions()
-        {
-            if (touchingObjects == null)
-            {
+        protected virtual void ForceStopAllInteractions() {
+            if (touchingObjects == null) {
                 return;
             }
 
@@ -1398,26 +1237,20 @@ namespace VRTK
             StopUsingInteractions();
         }
 
-        protected virtual void StopTouchingInteractions()
-        {
-            foreach (GameObject touchingObject in new HashSet<GameObject>(touchingObjects))
-            {
-                if (touchingObject.activeInHierarchy || forceDisabled)
-                {
+        protected virtual void StopTouchingInteractions() {
+            foreach (GameObject touchingObject in new HashSet<GameObject>(touchingObjects)) {
+                if (touchingObject.activeInHierarchy || forceDisabled) {
                     touchingObject.GetComponentInChildren<VRTK_InteractTouch>().ForceStopTouching();
                 }
             }
         }
 
-        protected virtual void StopGrabbingInteractions()
-        {
+        protected virtual void StopGrabbingInteractions() {
             GameObject grabbingObject = GetGrabbingObject();
 
-            if (grabbingObject != null && (grabbingObject.activeInHierarchy || forceDisabled))
-            {
+            if (grabbingObject != null && (grabbingObject.activeInHierarchy || forceDisabled)) {
                 VRTK_InteractGrab grabbingObjectScript = grabbingObject.GetComponentInChildren<VRTK_InteractGrab>();
-                if (grabbingObjectScript != null && grabbingObjectScript.interactTouch != null)
-                {
+                if (grabbingObjectScript != null && grabbingObjectScript.interactTouch != null) {
                     grabbingObjectScript.interactTouch.ForceStopTouching();
                     grabbingObjectScript.ForceRelease();
                     forcedDropped = true;
@@ -1425,34 +1258,28 @@ namespace VRTK
             }
         }
 
-        protected virtual void StopUsingInteractions()
-        {
-            if (usingObject != null && usingObject.interactTouch != null && (usingObject.gameObject.activeInHierarchy || forceDisabled))
-            {
+        protected virtual void StopUsingInteractions() {
+            if (usingObject != null && usingObject.interactTouch != null && (usingObject.gameObject.activeInHierarchy || forceDisabled)) {
                 usingObject.interactTouch.ForceStopTouching();
                 usingObject.ForceStopUsing();
             }
         }
 
-        protected virtual void ResetDropSnapType()
-        {
-            switch (storedSnapDropZone.snapType)
-            {
+        protected virtual void ResetDropSnapType() {
+            switch (storedSnapDropZone.snapType) {
                 case VRTK_SnapDropZone.SnapTypes.UseKinematic:
                 case VRTK_SnapDropZone.SnapTypes.UseParenting:
                     LoadPreviousState();
                     break;
                 case VRTK_SnapDropZone.SnapTypes.UseJoint:
                     Joint snapDropZoneJoint = storedSnapDropZone.GetComponent<Joint>();
-                    if (snapDropZoneJoint)
-                    {
+                    if (snapDropZoneJoint) {
                         snapDropZoneJoint.connectedBody = null;
                     }
                     break;
             }
 
-            if (!previousLocalScale.Equals(Vector3.zero))
-            {
+            if (!previousLocalScale.Equals(Vector3.zero)) {
                 transform.localScale = previousLocalScale;
             }
 
@@ -1460,18 +1287,14 @@ namespace VRTK
             storedSnapDropZone = null;
         }
 
-        protected virtual void ResetUsingObject()
-        {
-            if (usingObject != null)
-            {
+        protected virtual void ResetUsingObject() {
+            if (usingObject != null) {
                 usingObject.ForceResetUsing();
             }
         }
 
-        protected virtual void ManageInteractionEvent(InteractionType givenType, bool state, InteractableObjectEventHandler methodCallback)
-        {
-            switch (givenType)
-            {
+        protected virtual void ManageInteractionEvent(InteractionType givenType, bool state, InteractableObjectEventHandler methodCallback) {
+            switch (givenType) {
                 case InteractionType.NearTouch:
                     ManageNearTouchSubscriptions(state, methodCallback);
                     break;
@@ -1499,106 +1322,82 @@ namespace VRTK
             }
         }
 
-        protected virtual void ManageNearTouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageNearTouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectNearTouched -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectNearTouched += methodCallback;
             }
         }
 
-        protected virtual void ManageTouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageTouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectTouched -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectTouched += methodCallback;
             }
         }
 
-        protected virtual void ManageGrabSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageGrabSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectGrabbed -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectGrabbed += methodCallback;
             }
         }
 
-        protected virtual void ManageUseSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageUseSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectUsed -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectUsed += methodCallback;
             }
         }
 
-        protected virtual void ManageNearUntouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageNearUntouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectNearUntouched -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectNearUntouched += methodCallback;
             }
         }
 
-        protected virtual void ManageUntouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageUntouchSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectUntouched -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectUntouched += methodCallback;
             }
         }
 
-        protected virtual void ManageUngrabSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageUngrabSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectUngrabbed -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectUngrabbed += methodCallback;
             }
         }
 
-        protected virtual void ManageUnuseSubscriptions(bool register, InteractableObjectEventHandler methodCallback)
-        {
-            if (!register)
-            {
+        protected virtual void ManageUnuseSubscriptions(bool register, InteractableObjectEventHandler methodCallback) {
+            if (!register) {
                 InteractableObjectUnused -= methodCallback;
             }
 
-            if (register)
-            {
+            if (register) {
                 InteractableObjectUnused += methodCallback;
             }
         }
